@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
+using Newtonsoft.Json;
 
 namespace Homework
 {
+    
     public class Manager
     {
         public TransactionCollection<Transaction> collection;
-
+        private string fileName = "";
         public Manager()
         {
             this.collection = new TransactionCollection<Transaction>();
@@ -40,6 +43,9 @@ namespace Homework
                 case "remove":
                     this.removeObjectById();
                     break;
+                case "enter filename":
+                    this.startWorkingWithFile();
+                    break;
                 case "search":
                     this.searchObjectsByInput();
                     break;
@@ -58,6 +64,88 @@ namespace Homework
             }
         }
 
+        public void CreateObjects(List<Dictionary<string, string>> items, string fileName)
+        {
+            List<Dictionary<string, string>> ObjectsErrorsList = new List<Dictionary<string, string>>();
+            List<Transaction> ValidObjects = new List<Transaction>();
+            foreach (var item in items)
+            {
+                Transaction transaction = new Transaction();
+                Dictionary<string, string> errorsDict = transaction.SetValuesFromDict(item);
+
+                if (errorsDict.Count != 0)
+                {
+                    ObjectsErrorsList.Add(errorsDict);
+                }
+                else
+                {
+                    ValidObjects.Add(transaction);
+                }
+            }
+
+            if (ObjectsErrorsList.Count != 0)
+            {
+                foreach (var err in ObjectsErrorsList)
+                {
+                    foreach (var item in err)
+                    {
+                        Console.WriteLine($"Errors: {item.Key} {item.Value}");
+                    }
+                }
+            }
+            else
+            {
+                this.fileName = fileName;
+                foreach (var obj in ValidObjects)
+                {
+                    this.collection.AddObject(obj);
+                }
+                this.RewriteFile();
+            }
+        }
+
+        public void RewriteFile()
+        {
+            List<Dictionary<string, string>> objects = new List<Dictionary<string, string>>();
+            foreach (var obj in this.collection.container)
+            {
+                
+                objects.Add(obj.GetValuesInDict());
+            }
+            string jsonString = JsonConvert.SerializeObject( objects );
+            using (StreamWriter writer = new StreamWriter(this.fileName, false)){ 
+                writer.Write(jsonString);
+            }
+        }
+        public void startWorkingWithFile()
+        {
+            if (this.fileName == "")
+            {
+                Console.Write("Enter the filename: ");
+                string fileName = Console.ReadLine();
+                Console.WriteLine(fileName);
+                try
+                {
+                    var path = "D:\\cSHARPhomework\\Homework\\Homework\\" + fileName;
+                    Console.WriteLine(path);
+                    List<Dictionary<string, string>> items;
+                    using (StreamReader r = new StreamReader(path))
+                    {
+                        string json = r.ReadToEnd();
+                        items = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(json);
+                    }
+                    this.CreateObjects(items, path);
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("There is no such file");
+                }
+            }
+            else
+            {
+                Console.WriteLine("You already have a filename");
+            }
+        }
         public void sortObjects()
         {
             Console.WriteLine("Sorting............");
@@ -105,6 +193,10 @@ namespace Homework
                 }
 
                 this.collection.container.Remove(obj);
+                if (this.fileName != "")
+                {
+                    this.RewriteFile();
+                }
             }
             catch (FormatException)
             {
@@ -154,6 +246,7 @@ namespace Homework
                         this.collection.container[indexOf] = obj;
                     }
                 }
+                this.RewriteFile();
                 
             }
             catch (FormatException)
@@ -192,7 +285,12 @@ namespace Homework
             {
                 this.collection.AddObject(transaction);
                 Console.WriteLine("object has been added correctly");
+                if (this.fileName != "")
+                {
+                    this.RewriteFile();
+                }
             }
+            
         }
 
         public void printAllObjects()
@@ -205,6 +303,7 @@ namespace Homework
             menu.Add("type 'add' to add a new item from console");
             menu.Add("type 'edit' to edit object by id");
             menu.Add("type 'remove' to remove object by id");
+            menu.Add("type 'enter filename' to make all functions using your file");
             menu.Add("type 'search' to search object by input");
             menu.Add("type 'sort' to sort objects by all fields");
             menu.Add("type 'print all' to print all objects in collection");

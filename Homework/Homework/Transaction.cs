@@ -70,6 +70,18 @@ namespace Homework
             return errorsDict;
         }
 
+        public Dictionary<string, string> GetValuesInDict()
+        {
+            PropertyInfo[] props = this.GetProperties();
+            Dictionary<string, string> propsDict = new Dictionary<string, string>();
+
+            foreach (var prop in props)
+            {
+                propsDict.Add(prop.Name, prop.GetValue(this).ToString());
+            }
+
+            return propsDict;
+        }
         public Dictionary<string, string> SetValuesFromDict(Dictionary<string, string> valuesDict)
         {
             Dictionary<string, string> errorsDict = new Dictionary<string, string>();
