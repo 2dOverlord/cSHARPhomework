@@ -29,7 +29,7 @@ namespace Homework
                 this.handleCommand(command);    
             }
         }
-
+        
         public void handleCommand(string command)
         {
             switch (command)
@@ -68,13 +68,25 @@ namespace Homework
         {
             List<Dictionary<string, string>> ObjectsErrorsList = new List<Dictionary<string, string>>();
             List<Transaction> ValidObjects = new List<Transaction>();
-            foreach (var item in items)
+            
+            for (int i = 0; i < items.Count(); i++)
             {
+                Dictionary<string, string> item = items[i];
                 Transaction transaction = new Transaction();
                 Dictionary<string, string> errorsDict = transaction.SetValuesFromDict(item);
-
+                
+                int useless;
+                foreach (var validItem in ValidObjects)
+                {
+                    if ( Int32.TryParse(item["ID"], out useless ) && validItem.ID == Int32.Parse(item["ID"]))
+                    {
+                        errorsDict.Add("ID", "Id must be unique");
+                    }
+                }
+                
                 if (errorsDict.Count != 0)
                 {
+                    errorsDict.Add("General", $"Object ID is {item["ID"]}, string number {(i * 10) + 2}");
                     ObjectsErrorsList.Add(errorsDict);
                 }
                 else
@@ -87,9 +99,13 @@ namespace Homework
             {
                 foreach (var err in ObjectsErrorsList)
                 {
+                    Console.WriteLine($"General info ID: {err["General"]}");
                     foreach (var item in err)
                     {
-                        Console.WriteLine($"Errors: {item.Key} {item.Value}");
+                        if (item.Key != "General")
+                        {
+                            Console.WriteLine($"Errors: {item.Key} {item.Value}");
+                        }
                     }
                 }
             }
@@ -112,8 +128,13 @@ namespace Homework
                 
                 objects.Add(obj.GetValuesInDict());
             }
-            string jsonString = JsonConvert.SerializeObject( objects );
-            using (StreamWriter writer = new StreamWriter(this.fileName, false)){ 
+            string jsonString = JsonConvert.SerializeObject( objects, Formatting.Indented);
+            Console.Write(jsonString);
+            // Set a variable to the Documents path.
+            string docPath =
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            Console.Write(Path.Combine(docPath, this.fileName));
+            using (StreamWriter writer = new StreamWriter(Path.Combine(docPath, this.fileName), false)){ 
                 writer.Write(jsonString);
             }
         }
@@ -204,8 +225,7 @@ namespace Homework
             }
             catch (Exception)
             {
-                // Console.WriteLine("there is no element with such id in the list");
-                Console.WriteLine("smth gone wrong");
+                Console.WriteLine("there is no element with such id in the list");
             }
         }
 
@@ -246,7 +266,10 @@ namespace Homework
                         this.collection.container[indexOf] = obj;
                     }
                 }
-                this.RewriteFile();
+                if (this.fileName != "")
+                {
+                    this.RewriteFile();
+                }
                 
             }
             catch (FormatException)
@@ -255,8 +278,7 @@ namespace Homework
             }
             catch (Exception)
             {
-                // Console.WriteLine("there is no element with such id in the list");
-                Console.WriteLine("smth gone wrong");
+                Console.WriteLine("There is no element with such id in the list or there is no such field");
             }
         }
         public void addObjectFromConsole()
