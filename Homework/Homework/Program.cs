@@ -8,8 +8,8 @@ namespace Homework
     {
         static void Main(string[] args)
         {
-            Manager manager = new Manager();
-            manager.run();
+            TransactionCollection<Transaction> collection = new TransactionCollection<Transaction>();
+            collection.run();
         }
     }
 }

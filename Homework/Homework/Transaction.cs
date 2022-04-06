@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Sockets;
 
@@ -28,8 +29,22 @@ namespace Homework
                    $"{this.PaymentDate.Day.ToString()},\n{this.Amount.ToString()}";
         }
 
-        public int CompareTo(Transaction comparePart) =>
-            comparePart == null ? 1 : ID.CompareTo(comparePart.ID);
+        public int CompareTo(Transaction other)
+        {
+            List<int> comparing = new List<int>()
+            {
+                id.CompareTo(other.id),
+                payer_name.CompareTo(other.payer_name),
+                card_number.CompareTo(other.card_number) ,
+                Int32.Parse(month).CompareTo(Int32.Parse(other.month)),
+                Int32.Parse(year).CompareTo(Int32.Parse(other.year)),
+                cvc.CompareTo(other.cvc),
+                payment_date.CompareTo(other.payment_date),
+                amount.CompareTo(other.amount)
+            };
+            return comparing.Sum();
+
+        }
         public Dictionary<string, string> Read()
         {
             Dictionary<string, string> valuesDict = new Dictionary<string, string>(); 
@@ -208,13 +223,13 @@ namespace Homework
             get { return year;  }
             set
             {
-                if (value.Length == 4 && Int32.Parse(value) >= 2022)
+                if (value.Length == 4 && Int32.Parse(value) >= 2022 && Int32.Parse(value) <= 2032)
                 {
                     year = value;
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("Year","Year must be more than 2022");
+                    throw new ArgumentOutOfRangeException("Year","Year must be more than 2022 and less than 2032");
                 }
             }
         }
