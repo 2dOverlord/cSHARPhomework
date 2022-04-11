@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "ID": "3",
+    "PatientName": "Dasdf Adf",
+    "PatientPhone": "+380123456789",
+    "Vaccine": "CoronaVac",
+    "Date": "21.12.2022",
+    "StartTime": "12:00",
+    "EndTime": "13:00"
+  },
+  {
+    "ID": "1",
+    "PatientName": "John Doe",
+    "PatientPhone": "+380123456789",
+    "Vaccine": "Pfizer",
+    "Date": "21.12.2022",
+    "StartTime": "12:00",
+    "EndTime": "13:00"
+  },
+  {
+    "ID": "8",
+    "PatientName": "Daaa Da",
+    "PatientPhone": "+380508881573",
+    "Vaccine": "CoronaVac",
+    "Date": "21.12.2022",
+    "StartTime": "14:00",
+    "EndTime": "15:00"
+  }
+]

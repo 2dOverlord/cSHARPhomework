@@ -1,0 +1,34 @@
+[
+  {
+    "Email": "thor.halfhuman@gmail.com",
+    "Status": "Rejected",
+    "ID": "6",
+    "Message": "Too small amount"
+  },
+  {
+    "Email": "valk.swordw@gmail.com",
+    "Status": "Draft",
+    "ID": "2"
+  },
+  {
+    "Email": "ais@gmail.com",
+    "Status": "Approved",
+    "ID": "15"
+  },
+  {
+    "Email": "friend@gmail.com",
+    "Status": "Draft",
+    "ID": "19"
+  },
+  {
+    "Email": "budda.@gmail.com",
+    "Status": "Draft",
+    "ID": "10"
+  },
+  {
+    "Email": "budda.@gmail.com",
+    "Status": "Rejected",
+    "ID": "20",
+    "Message": "Incorrect name"
+  }
+]

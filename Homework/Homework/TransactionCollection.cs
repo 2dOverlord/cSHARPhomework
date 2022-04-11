@@ -35,18 +35,24 @@ namespace Homework
                 this.handleCommand(command);    
             }
         }
+
+        public void printObjectById(int ID)
+        {
+            Console.WriteLine("----------------------------------------------");
+            var obj = this.container.Find(x => returnObjId(x) == ID);
+            PropertyInfo[] properties = obj.GetType().GetProperties();
+            foreach (var prop in properties)
+            {
+                Console.WriteLine(prop.Name.ToString() + ": " + prop.GetValue(obj));
+            }
+            Console.WriteLine("--------------------------------------------------");
+        }
         public void handleCommand(string command)
         {
             switch (command)
             {
                 case "add":
                     this.addObjectFromConsoleGeneric();
-                    break;
-                case "edit":
-                    this.editObjectById();
-                    break;
-                case "remove":
-                    this.removeObjectById();
                     break;
                 case "search":
                     this.searchObjectsByInput();
@@ -128,14 +134,13 @@ namespace Homework
             return -1;
         }
         
-        public void removeObjectById()
+        public void removeObjectById(int id)
         {
-            Console.Write("Enter the object id: ");
-            string objectID = Console.ReadLine();
+
 
             try
             {
-                int objectIdInt = Int32.Parse(objectID);
+                int objectIdInt = id;
                 var obj = this.container.Find(x => returnObjId(x) == objectIdInt);
                 if (obj == null)
                 {
@@ -157,14 +162,13 @@ namespace Homework
                 Console.WriteLine("there is no element with such id in the list");
             }
         }
-        public void editObjectById()
+        public void editObjectById(int id)
         {
-            Console.Write("Enter the object id: ");
-            string objectID = Console.ReadLine();
+            
 
             try
             {
-                int objectIdInt = Int32.Parse(objectID);
+                int objectIdInt = id;
                 
                 var obj = this.container.Find(x => returnObjId(x) == objectIdInt);
                 if (obj == null)
@@ -293,24 +297,46 @@ namespace Homework
                     }
                     catch (NotSupportedException notSupportedErr)
                     {
-                        var propType = property.PropertyType;
-                        if (propType.ToString() == "System.DateOnly")
+                        try
                         {
-                            var value = System.DateOnly.Parse(item[property.Name.ToString().ToLower()]);
-                            property.SetValue(obj, value);
-                        } else if(propType.ToString() == "System.TimeOnly")
-                        {
-                            var value = System.TimeOnly.Parse(item[property.Name.ToString().ToLower()]);
-                            property.SetValue(obj, value);
+                            var propType = property.PropertyType;
+                            if (propType.ToString() == "System.DateOnly")
+                            {
+                                var value = System.DateOnly.Parse(item[property.Name.ToString().ToLower()]);
+                                property.SetValue(obj, value);
+                            }
+                            else if (propType.ToString() == "System.TimeOnly")
+                            {
+                                var value = System.TimeOnly.Parse(item[property.Name.ToString().ToLower()]);
+                                property.SetValue(obj, value);
+                            }
+                            else
+                            {
+                                errDict.Add(property.Name.ToString(), "Invalid format");
+                            }
                         }
-                        else
+                        catch (Exception err)
                         {
-                            errDict.Add(property.Name.ToString(), notSupportedErr.Message);
+                            if (err.InnerException != null)
+                            {
+                                errDict.Add(property.Name.ToString(), err.InnerException.Message);
+                            }
+                            else
+                            {
+                                errDict.Add(property.Name.ToString(), err.Message);   
+                            }
                         }
                     }
                     catch (Exception LocalErr)
                     {
-                        errDict.Add(property.Name.ToString(), LocalErr.Message);
+                        if (LocalErr.InnerException != null)
+                        {
+                            errDict.Add(property.Name.ToString(), LocalErr.InnerException.Message);
+                        }
+                        else
+                        {
+                            errDict.Add(property.Name.ToString(), LocalErr.Message);   
+                        }
                     }
                 }
 
@@ -318,11 +344,19 @@ namespace Homework
                 {
                     if (prop.GetValue(obj) == null)
                     {
-                        errDict.Add(prop.Name.ToString(), "Property value is null");
+                        try
+                        {
+                            errDict.Add(prop.Name.ToString(), "Property value is null");
+                        }
+                        catch (Exception err)
+                        {
+                            
+                        }
                     }
                 }
                 if (errDict.Count != 0)
                 {
+                    errDict.Add("General", $"Object ID is {item["id"]}, string number {(i * 10) + 2}");
                     ObjectsErrorsList.Add(errDict);
                 }
                 else
@@ -336,6 +370,7 @@ namespace Homework
                 foreach (var err in ObjectsErrorsList)
                 {
                     Console.WriteLine("----------------------");
+                    Console.WriteLine($"General info ID: {err["General"]}");
                     foreach (var item in err)
                     {
                         if (item.Key != "General")
@@ -360,7 +395,7 @@ namespace Homework
         {
             if (this.fileName == "")
             {
-                Console.Write("Enter the filename: ");
+                Console.Write("Enter the filename for collecton data: ");
                 string fileName = Console.ReadLine();
                 Console.WriteLine(fileName);
                 try
@@ -385,7 +420,7 @@ namespace Homework
             }
         }
 
-        public void addObjectFromConsoleGeneric()
+        public T addObjectFromConsoleGeneric()
         {
             try
             {
@@ -448,6 +483,7 @@ namespace Homework
                     {
                         this.RewriteFile();
                     }
+                    return obj;
                 }
                 else
                 {
@@ -465,6 +501,7 @@ namespace Homework
                 Console.WriteLine(err.Message);
             }
 
+            throw new Exception();
 
         }
 
@@ -497,10 +534,12 @@ namespace Homework
             {
                 var result = this.container.OrderBy(r => r.GetType().GetProperty(fieldName).GetValue(r, null)).ToList();
                 Console.WriteLine("\nAfter sort by part number:");
+                this.container = result;
                 foreach (var obj in result)
                 {
                     Console.WriteLine(obj);
                 }
+                this.RewriteFile();
             }
             else
             {
@@ -515,11 +554,12 @@ namespace Homework
             menu.Add("type 'add' to add a new item from console");
             menu.Add("type 'edit' to edit object by id");
             menu.Add("type 'remove' to remove object by id");
+            /*
             menu.Add("type 'enter filename' to make all functions using your file");
             menu.Add("type 'search' to search object by input");
             menu.Add("type 'sort' to sort objects by all fields");
             menu.Add("type 'print all' to print all objects in collection");
-            menu.Add("type 'exit' to end program");
+            menu.Add("type 'exit' to end program");*/
             return menu;
         }
     }

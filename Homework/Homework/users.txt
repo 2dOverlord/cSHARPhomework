@@ -1,0 +1,54 @@
+[
+  {
+    "FirstName": "Odin",
+    "LastName": "God",
+    "Email": "odin.god@gmail.com",
+    "Role": "ADMIN",
+    "Password": "056EB9048C7FB8977EF1060C3CC266EB5E4CF864410CD56C050A9F929B9CEC02"
+  },
+  {
+    "Salary": "2000",
+    "FirstDayInCompany": "19.04.2018",
+    "FirstName": "Thor",
+    "LastName": "Halfhuman",
+    "Email": "thor.halfhuman@gmail.com",
+    "Role": "STAFF",
+    "Password": "C23AFBE62989950F9BF04C0A33320841455B3847ED806A6530543C0F79796B8D"
+  },
+  {
+    "Salary": "2050",
+    "FirstDayInCompany": "04.09.2019",
+    "FirstName": "Valkiria",
+    "LastName": "Swordw",
+    "Email": "valk.swordw@gmail.com",
+    "Role": "STAFF",
+    "Password": "C0CC33693B090AB02F141E21599AEE5F17A29D8C8381457B53DD44436ABA830B"
+  },
+  {
+    "Salary": "2010",
+    "FirstDayInCompany": "22.09.2014",
+    "FirstName": "Aiss",
+    "LastName": "Anubis",
+    "Email": "ais@gmail.com",
+    "Role": "STAFF",
+    "Password": "CAF7FBA210FD7F0085E4C99AD18B1BFF6693A4914D7D9308AC58BD9DA120C5BC"
+  },
+  {
+    "Salary": "2500",
+    "FirstDayInCompany": "14.12.2021",
+    "FirstName": "Persona",
+    "LastName": "Friend",
+    "Email": "friend@gmail.com",
+    "Role": "STAFF",
+    "Password": "619DF622ED1E20B4FB9851C01F18F4E14FC1964022D0CAFCE4AC5F62089A2702"
+  },
+  {
+    "Salary": "200",
+    "FirstDayInCompany": "10.04.2022",
+    "FirstName": "Budda",
+    "LastName": "Sungod",
+    "Email": "budda.@gmail.com",
+    "Role": "STAFF",
+    "Password": "3300C28211B07C7BD576529CC90C8D531EF303471AD93DBBF9086E005BF8E8C6"
+  }
+]
